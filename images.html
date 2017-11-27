@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>scorpy.maikosoft.com</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- styles go here eventually -->
+  </head>
+
+  <body>
+  <div id="app">
+      <div v-html="this.menuHtml"></div>
+
+   <div>
+      <img :src="'img/' + image.link" style="height: 300px">
+      
+      <div v-for="filename in fileNames">  
+         <a href="#" v-on:click="updateImage">{{filename}}</a>
+      </div>
+   </div>
+  </div>
+
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4"></script>
+    <script>
+      var app = new Vue({
+         el: '#app',
+           data:  {
+                  image: {
+                     link: "image3.JPG"
+                  },
+                  fileNames: "",
+                  menuHtml: "",
+                  analytics: ""
+           },
+           methods: {
+                updateImage: (event) =>  {
+                   console.log(event);
+                   console.log(event.target.innerText);
+                   console.log(this);
+                   image.link = event.target.innerText;
+                }
+           },
+           created: function () {
+              this.$http.get("menu.php").then(response => {
+                 this.menuHtml = response.body;
+              }, response => {
+                 console.log("there was an error");
+              })
+
+              this.$http.get("analytics.php").then(response => {
+                 this.anayltics = response.body;
+              }, response => {
+                 console.log("there was an error");
+              })
+
+              this.$http.get("listImages.php").then(response => {
+                 this.fileNames = response.body.split(" ");
+              }, response => {
+                 console.log("there was an error");
+              })
+          }
+      })
+    </script>
+
+      <div v-html="this.analytics"></div>
+  </body>
+</html>
